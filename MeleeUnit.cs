@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace Task2_18011065_MphathiMaapola
 {
     [Serializable]
     public class MeleeUnit : Unit
     {
-        //isDead field used for Death method
+        //Zombie field used for Death method
         public bool Zombie { get; set; }
 
         public int XPos
@@ -121,6 +122,8 @@ namespace Task2_18011065_MphathiMaapola
                 RangedUnit ru = (RangedUnit)attacker;
                 Health = Health - (ru.Attack - ru.AttackRange);
             }
+            
+          
 
             if (Health <= 0)
             {
@@ -129,7 +132,8 @@ namespace Task2_18011065_MphathiMaapola
             }
         }
 
-        public override bool InRange(Unit other)
+
+        public override bool InRange(Unit other,Building ob)
         {
             int distance = 0;
             int otherX = 0;
@@ -143,6 +147,11 @@ namespace Task2_18011065_MphathiMaapola
             {
                 otherX = ((RangedUnit)other).XPos;
                 otherY = ((RangedUnit)other).YPos;
+            }
+            else if (ob is FactoryBuilding)
+            {
+                otherX = ((FactoryBuilding)ob).Xpos;
+                otherY = ((FactoryBuilding)ob).Ypos;
             }
 
             distance = Math.Abs(XPos - otherX) + Math.Abs(YPos - otherY);
@@ -190,18 +199,7 @@ namespace Task2_18011065_MphathiMaapola
             }
             return (closest, shortest);
         }
-
-        //public override void Naming()
-        //{
-        //    if (faction == 1)
-        //    {
-        //        Name = "Swordsmen";
-        //    }
-        //    else if (faction  == 2)
-        //    {
-        //        Name = "Foot Soldier";
-        //    }
-        //}
+      
 
         public override string ToString()
         {
@@ -209,6 +207,26 @@ namespace Task2_18011065_MphathiMaapola
             temp += "Melee:" + Name;
             temp += "{" + Symbol + "}";
             temp += "(" + XPos + "," + YPos + ")";
+            temp += Health + ", " + Attack + ", " + AttackRange + ", " + Speed;
+            temp += (Zombie ? " DEAD!" : " ALIVE!");
+            return temp;
+        }
+
+        public override void Save()
+        {
+            using(StreamWriter sw = new StreamWriter("Meleeunits.txt"))
+            {
+              
+                sw.WriteLine(SaveString());
+            }
+            
+        }
+        public string SaveString()
+        {
+            string temp = "";
+            temp += "Melee:" + Name;
+            temp += "{" + Symbol + "}";
+            temp += "Co-ordinates (" + XPos + "," + YPos + ")";
             temp += Health + ", " + Attack + ", " + AttackRange + ", " + Speed;
             temp += (Zombie ? " DEAD!" : " ALIVE!");
             return temp;

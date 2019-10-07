@@ -24,11 +24,14 @@ namespace Task2_18011065_MphathiMaapola
 
         public abstract void Move(int dir);
         public abstract void Combat(Unit attacker);
-        public abstract bool InRange(Unit other);
+        
+        public abstract bool InRange(Unit other, Building building);
         public abstract (Unit, int) Closest(List<Unit> units);
+        
         public abstract void Death();
         public abstract override string ToString();
 
+        public abstract void Save();
         //public abstract void Naming ();
     }
 }

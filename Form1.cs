@@ -16,6 +16,7 @@ namespace Task2_18011065_MphathiMaapola
     public partial class Form1 : Form
     {
         GameEngine engine;
+        Map map;
         ResourceBuilding resources;
         FactoryBuilding factb;
 
@@ -54,25 +55,16 @@ namespace Task2_18011065_MphathiMaapola
 
 
         private void BtnSave_Click_1(object sender, EventArgs e)
-        { 
-           
+        {
+            map = new Map(20, txtInfo);
+                map.Save();
+        }
 
-            try
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                FileStream fs = new FileStream(path:"MAp.dat", FileMode.Create, FileAccess.Write, FileShare.None);
-                using (fs)
-                {
-                  //  bf.Serialize(fs);
-                    MessageBox.Show("Saved");
-                }
-               
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                
-            }
+        private void TrackBar1_Scroll(object sender, EventArgs e)
+        {
+            grpMap.Size = new Size(trackBar1.Value, trackBar1.Value);
+            mapSize.Text = trackBar1.Value.ToString();
+
         }
     }
 }

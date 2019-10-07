@@ -128,7 +128,7 @@ namespace Task2_18011065_MphathiMaapola
             }
         }
 
-        public override bool InRange(Unit other)
+        public override bool InRange(Unit other,Building ob)
         {
             int distance = 0;
             int otherX = 0;
@@ -213,5 +213,10 @@ namespace Task2_18011065_MphathiMaapola
             return temp;
         }
 
+
+        public override void Save()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

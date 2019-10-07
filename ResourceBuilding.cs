@@ -84,10 +84,11 @@ namespace Task2_18011065_MphathiMaapola
             string temp = "";
             temp += "{" + Symbol + "}";
             temp += "{" + resourceType + "}";
-            temp += "{ Amount of resources generated :" + resourcePool;
+            temp += "{ Amount of resources generated :" + resourcePool.ToString();
             temp += "{ Resources per Round " + resourcesPerRound;
             temp += "(" + Xpos + "," + Ypos + ")";
             temp += " (" + Health + ")";
+            temp += (isDestroyed ? " FUNCTIONAL !" : " UNFUNCTIONAL!");
 
             return temp;
 
@@ -102,13 +103,13 @@ namespace Task2_18011065_MphathiMaapola
                 for (int i = 0; i < resourcePool; i++)
                 {
                     Resources.Remove(i);
-                    //Buidling destrys itself after it runs out of rsources 
+                      //Buidling destroys itself after it runs out of rsources 
                     if (i>resourcePool)
                     {
                         isDestroyed = true;
                     }
 
-                    // LAbels to show Resources 
+                      // LAbels to show Resources 
                     lbl.Text = "Resources :" + Resources.Count.ToString();
                     lbl.Text = "Resources Aquired : " + i.ToString();
                 }
@@ -119,6 +120,24 @@ namespace Task2_18011065_MphathiMaapola
         public override void Save(Building b)
         {
             
+        }
+
+        public override void Combat(Unit attacker)
+        {
+            if (attacker is MeleeUnit)
+            {
+                Health = Health - ((MeleeUnit)attacker).Attack;
+            }
+            else if (attacker is RangedUnit)
+            {
+                RangedUnit ru = (RangedUnit)attacker;
+                Health = Health - (ru.Attack - ru.AttackRange);
+            }
+
+            if (Health <= 0)
+            {
+                Destrcution();
+            }
         }
     }
 }

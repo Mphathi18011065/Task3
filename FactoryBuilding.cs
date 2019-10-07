@@ -16,9 +16,10 @@ namespace Task2_18011065_MphathiMaapola
 class FactoryBuilding : Building
     {
         Random r = new Random();
-        List<Unit> units = new List<Unit>();
-
+     
+        public bool Burnt { get; set; }
         List<FactoryBuilding> buildings;
+        List<Unit> units = new List<Unit>();
 
         TextBox txtInfo;
 
@@ -28,50 +29,50 @@ class FactoryBuilding : Building
 
         public int Xpos
         {
-            get { return xPos; }
-            set { xPos = value; }
+            get { return base.xPos; }
+            set {base. xPos = value; }
         }
         private int yPos;
 
         public int Ypos
         {
-            get { return yPos; }
-            set { yPos = value; }
+            get { return base.yPos; }
+            set { base.yPos = value; }
         }
         private string name;
 
         public string Name
         {
-            get { return name; }
-            set { name = value; }
+            get { return base.name; }
+            set { base.name = value; }
         }
 
         private int health;
 
         public int Health
         {
-            get { return health; }
-            set { health = value; }
+            get { return base.health; }
+            set { base.health = value; }
         }
 
         private int maxHealth;
 
         public int MaxHealth 
         {
-            get { return maxHealth; }
+            get { return base.maxHealth; }
             
         }
 
         public int Faction
         {
-            get { return faction; }
-            set { faction = value; }
+            get { return base.faction; }
+            set { base.faction = value; }
         }
 
         public string Symbol
         {
-            get { return symbol; }
-            set { symbol =" [f]"; }
+            get { return base.symbol; }
+            set { base.symbol =" [f]"; }
         }
 
 
@@ -83,6 +84,7 @@ class FactoryBuilding : Building
             Symbol = v4;
             Name = v5;
             Health = v6; // Factory health 
+            Burnt = false;
                 
           //  GenerateUnits(20);
           //  Display();
@@ -96,8 +98,12 @@ class FactoryBuilding : Building
 
         public override void Destrcution()
         {
-            throw new NotImplementedException();
+
+                Symbol = "***"; //gone when buildings are destoryed this is called 
+            Burnt = true;
+            
         }
+        
         public override void Save(Building b ) // Serialize save 
         {
 
@@ -106,14 +112,18 @@ class FactoryBuilding : Building
         public override string ToString()
         {
             string temp = "";
+            temp += "Factory Building ";
             temp += "Co-ordintes : " + "(" + Xpos + "," + Ypos + ")";
             temp += "SYmbol :" + Symbol;
             temp += "Resource Name " + name;
+            temp += (Burnt ? " DEAD!" : " ALIVE!");
             return temp;
         }
         //Produces units every 
-        public void Spawnunit(int numRounds)
+        public void Spawnunit(int numRounds , GroupBox grpbx)
         {
+
+            
             for (int i = 0; i < numRounds; i++)
             {
                 if (r.Next(0, 2) == 0) //Generate 
@@ -141,6 +151,61 @@ class FactoryBuilding : Building
                                                 "");
                     units.Add(ru);
                 }
+            }
+            foreach (Unit u in units)
+            {
+                Button b = new Button();
+                if (u is MeleeUnit)
+                {
+                    MeleeUnit mu = (MeleeUnit)u;
+                    b.Size = new Size(20, 20);
+                    b.Location = new Point(mu.XPos * 20, mu.YPos * 20);
+                    b.Text = mu.Symbol;
+
+                    if (mu.Faction == 0)
+                    {
+                        b.ForeColor = Color.AliceBlue;
+                    }
+                    else
+                    {
+                        b.ForeColor = Color.Green;
+                    }
+                    // Naming Melle Units  created 
+                    if (mu.Faction == 0)
+                    {
+                        mu.Name = "Swordsmen";
+                    }
+                    else
+                    {
+                        mu.Name = "Paladin";
+                    }
+                }
+                else
+                {
+                    RangedUnit ru = (RangedUnit)u;
+                    b.Size = new Size(20, 20);
+                    b.Location = new Point(ru.XPos * 20, ru.YPos * 20);
+                    b.Text = ru.Symbol;
+                    if (ru.Faction == 0)
+                    {
+                        b.ForeColor = Color.AliceBlue;
+                    }
+                    else
+                    {
+                        b.ForeColor = Color.Green;
+                    }
+                    //NAming Ranged Units 
+                    if (ru.Faction == 0)
+                    {
+                        ru.Name = "Bowsmen";
+                    }
+                    else
+                    {
+                        ru.Name = "Sorcerer";
+                    }
+                }
+                b.Click += Unit_Click;
+                grpbx.Controls.Add(b);
             }
         }// spwan units in 
 
@@ -207,6 +272,9 @@ class FactoryBuilding : Building
                 }
             }
         }
+
+      
+
         public void Factory_CLick(object sender, EventArgs e)
         {
             int x, y;
@@ -226,6 +294,11 @@ class FactoryBuilding : Building
                 }
             }
 
+        }
+
+        public override void Combat(Unit attacker)
+        {
+            throw new NotImplementedException();
         }
         //    public void GenerateUnits(int numRounds)
         //    {

@@ -31,6 +31,9 @@ namespace Task2_18011065_MphathiMaapola
         }
 
         public abstract void Destrcution();
+        public abstract void Combat(Unit attacker);
+       
+       
         public abstract override string ToString();
 
         public abstract void Save(Building b);

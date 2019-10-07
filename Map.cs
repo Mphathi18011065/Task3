@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 
 namespace Task2_18011065_MphathiMaapola
@@ -18,8 +19,10 @@ namespace Task2_18011065_MphathiMaapola
 
         List<Unit> units;
         List<Building> buildings;
-        
-    
+   
+        Form1 f1 = new Form1();
+
+
 
         Random r = new Random();
         int numUnits = 0;
@@ -30,20 +33,15 @@ namespace Task2_18011065_MphathiMaapola
             get { return units; }
             set { units = value; }
         }
-        //public List<FactoryBuilding> Buildings
-        //{
-        //    get { return buildings; }
-        //    set { buildings = value;}
-        //}
+
+        public List<Building> Buildings
+        {
+            get { return buildings; }
+            set { buildings = value; }
+
+        }
 
 
- 
-
-        //public List<FactoryBuilding> Buildings
-        //{
-        //    get { return buildings; }
-        //    set { buildings = value; }
-        //}
 
  
         public void Generate()
@@ -53,7 +51,7 @@ namespace Task2_18011065_MphathiMaapola
             {
                 if (r.Next(0, 2) == 0) //Generate Melee Unit
                 {
-                    MeleeUnit m = new MeleeUnit(r.Next(0, 20),
+                    MeleeUnit m = new MeleeUnit(r.Next(0,20 ),
                                                 r.Next(0, 20),
                                                 100,
                                                 1,
@@ -65,7 +63,7 @@ namespace Task2_18011065_MphathiMaapola
                 }
                 else // Generate Ranged Unit
                 {
-                    RangedUnit ru = new RangedUnit(r.Next(0, 20),
+                    RangedUnit ru = new RangedUnit(r.Next(0,20),
                                                 r.Next(0, 20),
                                                 100,
                                                 1,
@@ -83,14 +81,13 @@ namespace Task2_18011065_MphathiMaapola
             {
                 if (r.Next(0, 2) == 0)// generate factory 
                 {
-                    FactoryBuilding f = new FactoryBuilding(r.Next(0, 20), r.Next(0, 20), (j % 2 == 0 ? 1 : 0), 100, "[F.]", "Factory Building");
+                    FactoryBuilding f = new FactoryBuilding(r.Next(0, 20), r.Next(0, 20), (j % 2 == 0 ? 1 : 0), 20, "F", "Factory Building");
                     buildings.Add(f);
                 }
             }
             //Generate Resources
-            // generates half of the amount of factory units
-
-            for (int x = 0; x < numUnits/4 ; x++)
+            // generates half of the amount of  units
+            for (int x = 0; x < numUnits/2 ; x++)
             {
                 if (r.Next(0, 2) == 0)
                 {
@@ -98,6 +95,20 @@ namespace Task2_18011065_MphathiMaapola
                     buildings.Add(br);
                 }
             }
+            // Generate wizards 
+            // Generates num of units divided by 3 
+            // The neutral class is in the normal units 
+            for (int y = 0; y <numUnits ; y++)
+            {
+                if (r.Next(0,3)==0)
+                {
+                    WizardUnit w = new WizardUnit(r.Next(0, 20),r.Next(0, 20), 100,1,20, (y % 3 == 0 ? 1 : 0),// determines the faction
+                                                "W","Wizards");
+                    units.Add(w);
+                }
+            }
+            // Generate Neutral Team 
+            
         }
 
         public void Display(GroupBox groupBox)
@@ -131,7 +142,40 @@ namespace Task2_18011065_MphathiMaapola
                         mu.Name = "Paladin";
                     }
                 }
-                else
+                else if (u is WizardUnit)
+                {
+
+                    if (u is WizardUnit)
+                    {
+                        WizardUnit wu = (WizardUnit)u;
+                        b.Size = new Size(20, 20);
+                        b.Location = new Point(wu.XPos * 20, wu.YPos * 20);
+                        b.Text = "W";
+
+                        if (wu.Faction == 0)
+                        {
+                            b.ForeColor = Color.AliceBlue;
+                            // naming wizards 
+                            wu.Name = "Grand Viziour";
+                        }
+                        else if (wu.Faction == 2)
+                        {
+                            b.ForeColor = Color.Green;
+                            // naming wizards 
+                            wu.Name = "Grand Walkman";
+                        }
+                        else if (wu.Faction == 3)
+                        {
+                            b.ForeColor = Color.DarkKhaki;
+                            b.Text = "N";
+                            wu.Name = "Peace Shitters";
+
+                        }
+
+
+                        }
+               }
+                else if (u is RangedUnit)
                 {
                     RangedUnit ru = (RangedUnit)u;
                     b.Size = new Size(20, 20);
@@ -155,9 +199,12 @@ namespace Task2_18011065_MphathiMaapola
                         ru.Name = "Sorcerer";
                     }
                 }
-                b.Click += Unit_Click;
+
+                b.Click += Unit_Click;                
                 groupBox.Controls.Add(b);
             }
+
+            
 
             foreach (Building b in buildings)
             {
@@ -173,12 +220,14 @@ namespace Task2_18011065_MphathiMaapola
                     if (factory.Faction == 0)
                     {
                         c.ForeColor = Color.AliceBlue;
-                        c.BackColor = Color.AntiqueWhite;
+                        c.BackColor = Color.Azure;
+                        
                     }
                     else
                     {
                         c.ForeColor = Color.Green;
                         c.BackColor = Color.Honeydew;
+                      
                     }
                     
                 }
@@ -192,70 +241,23 @@ namespace Task2_18011065_MphathiMaapola
 
                     if (resource.Faction == 0)
                     {
-                        c.ForeColor = Color.AliceBlue;
-                        c.BackColor = Color.AntiqueWhite;
+                        c.ForeColor = Color.AliceBlue; // Differentates between enemy factories
+                        c.BackColor = Color.Azure;
+
                     }
                     else
                     {
                         c.ForeColor = Color.Green;
                         c.BackColor = Color.Honeydew;
+
                     }
                     
                 }
-                c.Click += Factory_CLick;
+                c.Click += Factory_CLick; 
                 groupBox.Controls.Add(c);
             }
-            //Display factories
-            /*
-            foreach (FactoryBuilding f in buildings)
-            {
-                Button fb = new Button();
-                FactoryBuilding factory = (FactoryBuilding)f;
-                fb.Size = new Size(20, 20);
-                fb.Location = new Point(factory.Xpos *20, factory.Ypos*20 ); //BUilding dont move 
-                fb.Text = factory.Symbol;
-
-                if (factory.Faction == 0)
-                {
-                    fb.ForeColor = Color.AliceBlue;
-                    fb.BackColor = Color.AntiqueWhite;
-                }
-                else
-                {
-                    fb.ForeColor = Color.Green;
-                    fb.BackColor = Color.Honeydew;
-                }
-                fb.Click += Factory_CLick;
-                groupBox.Controls.Add(fb);
-            }
-            */
-
-            //Display Resources
-            /*
-            foreach (ResourceBuilding rb in buildings)
-            {
-
-                Button rbb = new Button();
-                ResourceBuilding resource = (ResourceBuilding)rb;
-                rbb.Size = new Size(20, 20);
-                rbb.Location = new Point(resource.Xpos * 20, resource.Ypos * 20); /// creates custion postions for the values 
-                rbb.Text = resource.Symbol;
-
-                if (resource.Faction == 0)
-                {
-                    rbb.ForeColor = Color.AliceBlue;
-                    rbb.BackColor = Color.AntiqueWhite;
-                }
-                else
-                {
-                    rbb.ForeColor = Color.Green;
-                    rbb.BackColor = Color.Honeydew;
-                }
-                rbb.Click += Factory_CLick;
-                groupBox.Controls.Add(rbb);
-
-            }
-            */
+          
+       
 
         }
 
@@ -329,7 +331,16 @@ namespace Task2_18011065_MphathiMaapola
 
         public void Save()
         {
-            
+            //Saves 
+            for (int i = 0; i < units.Capacity; i++)
+            {
+                if (units[i] is MeleeUnit)
+                {
+                    MeleeUnit mu = (MeleeUnit)units[i];
+                    mu.Save();
+                }
+            }
+
         }
 
     }
